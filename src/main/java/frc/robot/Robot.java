@@ -8,7 +8,9 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.loops.CrashTracker;
 import frc.robot.loops.Looper;
+import frc.robot.subsystems.Drive;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -22,9 +24,20 @@ public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
 
 
+
+  private final Drive mDrive = Drive.getInstance();
+
+
+
+
   private final Looper mEnabledLooper = new Looper();
 	private final Looper mDisabledLooper = new Looper();
 	private final Looper mLoggingLooper = new Looper(0.002);
+
+
+
+  public static boolean is_red_alliance = false;
+	public static boolean flip_trajectories = false;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -63,7 +76,7 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+   // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -81,9 +94,22 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
-    }
+    try {
+			if (is_red_alliance) {
+				mDrive.zeroGyro(mDrive.getHeading().getDegrees() + 180.0);
+				flip_trajectories = false;
+			}
+			mDisabledLooper.stop();
+			mEnabledLooper.start();
+			mLoggingLooper.start();
+
+			mDrive.setNeutralBrake(true);
+
+		} catch (Throwable t) {
+			CrashTracker.logThrowableCrash(t);
+			throw t;
+		}
+
   }
 
   /** This function is called periodically during operator control. */
