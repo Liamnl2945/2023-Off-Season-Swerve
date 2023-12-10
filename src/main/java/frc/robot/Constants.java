@@ -214,11 +214,10 @@
         public static com.ctre.phoenixpro.configs.TalonFXConfiguration swerveDriveProFXConfig() {
                 com.ctre.phoenixpro.configs.TalonFXConfiguration config = new com.ctre.phoenixpro.configs.TalonFXConfiguration();
 
-                
+
                 config.CurrentLimits.SupplyCurrentLimitEnable = Constants.SwerveConstants.driveEnableCurrentLimit;
                 config.CurrentLimits.SupplyCurrentLimit = Constants.SwerveConstants.driveContinuousCurrentLimit;
-        /*fix me */      config.CurrentLimits.SupplyCurrentThreshold = Constants.SwerveConstants.drivePeakCurrentLimit;
-        /*fix me */        config.CurrentLimits.SupplyTimeThreshold = Constants.SwerveConstants.drivePeakCurrentDuration;
+                
 
                 config.Voltage.PeakForwardVoltage = 12.0;
                 config.Voltage.PeakReverseVoltage = -12.0;

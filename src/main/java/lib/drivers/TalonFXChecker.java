@@ -1,36 +1,34 @@
 package lib.drivers;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.BaseTalon;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import frc.robot.subsystems.Subsystem;
-
 import java.util.ArrayList;
 
-
-public class BaseTalonChecker extends MotorChecker<BaseTalon> {
-    private static class StoredBaseTalonConfiguration {
+public class TalonFXChecker extends MotorChecker<TalonFX> {
+    private static class StoredTalonFXConfiguration {
         public ControlMode mMode;
         public double mSetValue;
     }
 
-    protected ArrayList<StoredBaseTalonConfiguration> mStoredConfigurations = new ArrayList<>();
+    protected ArrayList<StoredTalonFXConfiguration> mStoredConfigurations = new ArrayList<>();
 
     public static boolean checkMotors(Subsystem subsystem,
-                                      ArrayList<MotorConfig<BaseTalon>> motorsToCheck,
+                                      ArrayList<MotorConfig<TalonFX>> motorsToCheck,
                                       CheckerConfig checkerConfig) {
-        BaseTalonChecker checker = new BaseTalonChecker();
+        TalonFXChecker checker = new TalonFXChecker();
         return checker.checkMotorsImpl(subsystem, motorsToCheck, checkerConfig);
     }
 
     @Override
     protected void storeConfiguration() {
         // record previous configuration for all talons
-        for (MotorConfig<BaseTalon> config : mMotorsToCheck) {
-            // LazyBaseTalon talon = (LazyBaseTalon) config.mMotor;
+        for (MotorConfig<TalonFX> config : mMotorsToCheck) {
+            LazyTalonFX talon = (LazyTalonFX) config.mMotor;
 
-            StoredBaseTalonConfiguration configuration = new StoredBaseTalonConfiguration();
-            configuration.mMode = ControlMode.PercentOutput; //talon.getControlMode();
-            configuration.mSetValue = 0.0; //talon.getLastSet();
+            StoredTalonFXConfiguration configuration = new StoredTalonFXConfiguration();
+            configuration.mMode = talon.getControlMode();
+            configuration.mSetValue = talon.getLastSet();
 
             mStoredConfigurations.add(configuration);
         }
@@ -45,12 +43,13 @@ public class BaseTalonChecker extends MotorChecker<BaseTalon> {
     }
 
     @Override
-    protected void setMotorOutput(BaseTalon motor, double output) {
+    protected void setMotorOutput(TalonFX motor, double output) {
         motor.set(ControlMode.PercentOutput, output);
     }
 
+    // gets motor output
     @Override
-    protected double getMotorCurrent(BaseTalon motor) {
+    protected double getMotorCurrent(TalonFX motor) {
         return motor.getStatorCurrent();
     }
 }
